@@ -101,6 +101,7 @@ export default {
   .flex_wrapper {
     display: flex;
     background-color: #fff;
+    padding: 10px 0;
     align-items:center;/*垂直居中*/
     .user_img {
       width: 80px;
