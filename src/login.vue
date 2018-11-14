@@ -1,12 +1,12 @@
 <template>
   <div class="login">
     <div class="app_name">沐博</div>
-    <group class="title_group">
+    <group class="title_group login_cells">
       <x-input placeholder="账号" v-model="model.username"></x-input>
       <x-input  placeholder="密码"   type="password" v-model="model.password"></x-input>
     </group>
     <div class="footer_div">
-      <x-button class="submit_btn login_btn" @click.native="login">登陆</x-button>
+      <x-button class="login_btn" @click.native="login">登陆</x-button>
       <a href="javascript:void(0)" class="register" @click="register">注册</a>
         <a href="javascript:void(0)" class="forget_psd">忘记密码?</a>
     </div>
@@ -79,6 +79,8 @@ export default {
     .login_btn {
       margin-top: 20px;
       margin-bottom: 10px;
+      color: #fff;
+      background-color: #7fc1fe;
     }
     a {
       font-size: 18px;

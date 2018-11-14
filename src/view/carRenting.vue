@@ -3,14 +3,14 @@
       <x-header :left-options="{backText: ''}">租车
         <x-icon slot="right" type="navicon" size="35" style="fill:#616161;position:relative;top:-8px;left:-3px;"></x-icon>
       </x-header>
-      <div v-show="step===1">
+      <div v-show="step===2">
         <div>
           <div class="title no_margin">
             <span>租车</span>
           </div>
           <group  class="title_group">
             <popup-picker title="租赁方式" :data="list1" v-model="queryParam.rentWay"  placeholder="请选择"></popup-picker>
-            <popup-picker title="需要司机" :data="list1" v-model="queryParam.needDriver"  placeholder="请选择"></popup-picker>
+            <popup-picker title="需要司机" :data="list2" v-model="queryParam.needDriver"  placeholder="请选择"></popup-picker>
             <datetime  title="租赁起始日期" v-model="queryParam.startDate" placeholder="请选择"> </datetime>
             <x-input  title="联系人" v-model="queryParam.relateName"></x-input>
             <x-input  title="联系电话" v-model="queryParam.relateTel"></x-input>
@@ -48,10 +48,16 @@
         <p class="notice_msg">超里程数：100公里/天，超过标准按照公里价格计算</p>
         <div class="btn_next" @click="step=2">下一步</div>
       </div>
-      <div v-show="step ===2" class="next_step">
+      <div v-show="step ===1" class="next_step">
         <group class="title_group">
-          <x-input title="始发地" v-model="queryParam.startPlace" ></x-input>
-          <x-input  title="目的地" v-model="queryParam.endPlace" ></x-input>
+          <div class="item_wrapper">
+            <img class="icon_img" src="../assets/sfd.png">
+            <x-input title="始发地" v-model="queryParam.startPlace" ></x-input>
+          </div>
+          <div class="item_wrapper">
+            <img class="icon_img" src="../assets/mdd.png">
+            <x-input  title="目的地" v-model="queryParam.endPlace" ></x-input>
+          </div>
         </group>
         <div class="btn_next submit_order" @click="step=2">提交订单</div>
       </div>
@@ -66,8 +72,8 @@ export default {
   data () {
     return {
       step: 1,
-      list1: ['方式A', '方式2'],
-      list2: ['是', '否'],
+      list1: [['方式A', '方式2']],
+      list2: [['是', '否']],
       queryParam: {
         rentWay: [],
         needDriver: [],
@@ -87,6 +93,9 @@ export default {
 <style scoped lang="less">
 .car_renting {
   padding-top: 46px;
+  .no_margin {
+    margin-top: 0;
+  }
   .tab {
     margin-top: 15px;
   }
@@ -137,6 +146,13 @@ export default {
     top:46px;
     bottom: 0;
     width: 100%;
+    .icon_img {
+      height: 10px;
+      width: 10px;
+      position: absolute;
+      left: 10px;
+      top: 16px;
+    }
     .submit_order {
       position: absolute;
       bottom: 0;

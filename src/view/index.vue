@@ -101,7 +101,6 @@ export default {
   .flex_wrapper {
     display: flex;
     background-color: #fff;
-    padding: 10px 0;
     align-items:center;/*垂直居中*/
     .user_img {
       width: 80px;
@@ -151,7 +150,7 @@ export default {
       .item {
         flex-grow: 1;
         text-align: center;
-        padding: 10px 0;
+        padding: 15px 0;
         img {
           width: 44px;
           height: 44px;
