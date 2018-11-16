@@ -83,7 +83,7 @@ export default {
       background-color: #7fc1fe;
     }
     a {
-      font-size: 18px;
+      font-size: 15px;
       color: #7a7a7a;
     }
     .forget_psd {

@@ -3,7 +3,7 @@
       <x-header :left-options="{backText: ''}">租车
         <x-icon slot="right" type="navicon" size="35" style="fill:#616161;position:relative;top:-8px;left:-3px;"></x-icon>
       </x-header>
-      <div v-show="step===2">
+      <div v-show="step===0">
         <div>
           <div class="title no_margin">
             <span>租车</span>
@@ -46,7 +46,7 @@
           </div>
         </div>
         <p class="notice_msg">超里程数：100公里/天，超过标准按照公里价格计算</p>
-        <div class="btn_next" @click="step=2">下一步</div>
+        <div class="btn_next" @click="step=1">下一步</div>
       </div>
       <div v-show="step ===1" class="next_step">
         <group class="title_group">
@@ -71,7 +71,7 @@ export default {
   components: {XHeader, Group, PopupPicker, Datetime, XInput, Tab, TabItem},
   data () {
     return {
-      step: 1,
+      step: 0,
       list1: [['方式A', '方式2']],
       list2: [['是', '否']],
       queryParam: {
