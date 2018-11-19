@@ -15,7 +15,7 @@
 
 <script>
 import {XHeader, Group, XInput, XButton, PopupPicker} from 'vux'
-
+import api from './router/api'
 export default {
   components: {XHeader, Group, XInput, XButton, PopupPicker},
   data () {
@@ -23,7 +23,8 @@ export default {
       type: [],
       model: {
         username: '',
-        password: ''
+        password: '',
+        usertype: '2'
       }
     }
   },
@@ -54,6 +55,20 @@ export default {
           content: '请输入密码'
         })
       }
+      this.$vux.loading.show({text: '登录中'})
+      let params = api.getParam('s01', this.model)
+      api.postData(this, params).then((data) => {
+        this.$vux.loading.hide()
+        if (data.code === 0) {
+          window.localStorage['token'] = data.data.token.token
+          this.$router.push('/index')
+        } else {
+          this.$vux.toast.text(data.msg, '')
+        }
+      }).catch((code) => {
+        this.$vux.loading.hide()
+        this.$vux.toast.text(code, '')
+      })
     },
     register () {
       this.$router.push('/register')

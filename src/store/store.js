@@ -4,12 +4,7 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const state = {}
-// state['base'] = '192.1.12.189:8080' // 欢姐
-// state['base'] = '192.1.12.146:8080'
-// state['base'] = '192.1.12.128:8080'
-// state['base'] = '192.1.12.191:8080'
-// state['base'] = '218.76.8.53:58080/htds'
-state['base'] = '61.187.87.133:8081/htds'
+state['base'] = '47.92.236.235:8081/carbase'
 state['url'] = ''
 
 const getters = {}

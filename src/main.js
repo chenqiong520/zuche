@@ -20,6 +20,12 @@ Vue.use(tools)
 // 返回状态判断(添加响应拦截器)
 AjaxPlugin.$http.interceptors.response.use(
   res => {
+    // 对响应数据做些事
+    if (res.data.code === 9010 || res.data.code === 9009) {
+      router.push('/login')
+      return {data: {msg: '请先登录', returnCode: -1}}
+    }
+    return res
   },
   error => {
     if (error.response === undefined && error.message === 'Network Error') {

@@ -78,6 +78,7 @@
 
 <script>
 import {XHeader, Group, Cell} from 'vux'
+import api from '../router/api'
 export default {
   name: 'index',
   components: {XHeader, Group, Cell},
@@ -89,7 +90,49 @@ export default {
         aac004: '', // 性别
         aac002: '', // 身份证号
         aab004: '' // 原工作单位名称
-      }
+      },
+      orderInfo: {
+        state: '',
+        ddcount: ''
+      },
+      orderList: []
+    }
+  },
+  mounted () {
+    this.loadOrderInfo()
+  },
+  methods: {
+    // 查询申请状态及历史订单数
+    loadOrderInfo () {
+      this.$vux.loading.show({text: '加载中'})
+      let params = api.getParam('app001')
+      api.postData(this, params).then((data) => {
+        this.$vux.loading.hide()
+        if (data.code === 0) {
+          this.orderInfo = data.data
+        } else {
+          this.$vux.toast.text(data.msg, '')
+        }
+      }).catch((code) => {
+        this.$vux.loading.hide()
+        this.$vux.toast.text(code, '')
+      })
+    },
+    // 查询历史订单
+    loadOrderList () {
+      this.$vux.loading.show({text: '加载中'})
+      let params = api.getParam('app002')
+      api.postData(this, params).then((data) => {
+        this.$vux.loading.hide()
+        if (data.code === 0) {
+          this.orderList = data.data.rows
+        } else {
+          this.$vux.toast.text(data.msg, '')
+        }
+      }).catch((code) => {
+        this.$vux.loading.hide()
+        this.$vux.toast.text(code, '')
+      })
     }
   }
 }
