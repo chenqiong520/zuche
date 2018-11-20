@@ -61,6 +61,7 @@ export default {
         this.$vux.loading.hide()
         if (data.code === 0) {
           window.localStorage['token'] = data.data.token.token
+          window.localStorage['userid'] = data.data.userData.userid
           this.$router.push('/index')
         } else {
           this.$vux.toast.text(data.msg, '')

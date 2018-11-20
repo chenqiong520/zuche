@@ -5,15 +5,19 @@
      </x-header>
      <div class="main_content">
        <div class="flex_wrapper">
-         <div class="user_img"><img src="../assets/user.png"/></div>
+         <div class="user_img"><img :src="userInfo.zh_tx_fj" /></div>
          <div class="user_info">
-           <p>张三</p>
-           <p>员工</p>
-           <p>车辆管理部</p>
+           <p>{{userInfo.zh_xm}}</p>
+           <p>{{userInfo.zhtypelabler}}</p>
+           <p>{{userInfo.dwlabler}}</p>
          </div>
-         <div class="finish_info">
+         <div v-if="false" class="finish_info">
            <p style="margin-bottom: 20px">待完成任务：<span style="color: #ff0000">4</span></p>
            <p>已完成任务：<span>120</span></p>
+         </div>
+         <div v-else class="finish_info">
+           <p style="margin-bottom: 20px">租车状态：<span style="color: #ff0000">{{orderInfo.state}}</span></p>
+           <p>历史订单数量：<span>{{orderInfo.ddcount}}</span></p>
          </div>
        </div>
      <!--  如果是员工就显示-->
@@ -22,20 +26,20 @@
            <span>当前订单</span>  <label class="right_text">上门交车</label>
          </div>
          <Group class="title_group">
-           <cell title="地点" :value="baseInfo.aac003"></cell>
-           <cell title="时间" :value="baseInfo.aac001"></cell>
-           <cell title="姓名" :value="baseInfo.aac004"></cell>
-           <cell title="电话" :value="baseInfo.aac002"></cell>
-           <cell title="车牌号" :value="baseInfo.aac002"></cell>
+           <cell title="地点" :value="userInfo.zh_xm"></cell>
+           <cell title="时间" :value="userInfo.zh_xm"></cell>
+           <cell title="姓名" :value="userInfo.zh_xm"></cell>
+           <cell title="电话" :value="userInfo.zh_xm"></cell>
+           <cell title="车牌号" :value="userInfo.zh_xm"></cell>
          </Group>
          <div class="btn_return_car">拍照还车</div>
          <div class="title ">
            <span>待完成任务</span>
          </div>
          <Group class="title_group">
-           <cell title="上门交车" :value="baseInfo.aac003"></cell>
-           <cell title="上门还车" :value="baseInfo.aac001"></cell>
-           <cell title="上门还车" :value="baseInfo.aac004"></cell>
+           <cell title="上门交车" :value="userInfo.zh_xm"></cell>
+           <cell title="上门还车" :value="userInfo.zh_xm"></cell>
+           <cell title="上门还车" :value="userInfo.zh_xm"></cell>
          </Group>
          <div class="btn_custom">客户还车</div>
        </div>
@@ -62,10 +66,10 @@
            <span>租赁订单</span> <label style="float:right; color: #0084ff">详情》</label>
          </div>
          <Group class="title_group">
-           <cell title="订单号" :value="baseInfo.aac003"></cell>
-           <cell title="到期时间" :value="baseInfo.aac001"></cell>
-           <cell title="租赁车型" :value="baseInfo.aac004"></cell>
-           <cell title="订单持续日期" :value="baseInfo.aac004"></cell>
+           <cell title="订单号" :value="userInfo.zh_xm"></cell>
+           <cell title="到期时间" :value="userInfo.zh_xm"></cell>
+           <cell title="租赁车型" :value="userInfo.zh_xm"></cell>
+           <cell title="订单持续日期" :value="userInfo.zh_xm"></cell>
          </Group>
          <div class="btn_group">
            <span class="btn">延期</span>
@@ -84,12 +88,12 @@ export default {
   components: {XHeader, Group, Cell},
   data () {
     return {
-      baseInfo: {
-        aac003: '麓谷企业广场', // 姓名
-        aac001: '', // 个人编号
-        aac004: '', // 性别
-        aac002: '', // 身份证号
-        aab004: '' // 原工作单位名称
+      userInfo: {
+        zh_xm: '', // 姓名
+        zhtype: '', // 用户角色类型
+        zhtypelabler: '', // 角色
+        dwlabler: '', // 单位
+        zh_tx_fj: '' // 头像
       },
       orderInfo: {
         state: '',
@@ -99,9 +103,27 @@ export default {
     }
   },
   mounted () {
+    this.getUserInfo()
     this.loadOrderInfo()
+    this.loadCurrentOrder()
   },
   methods: {
+    // 获取用户基本信息
+    getUserInfo () {
+      this.$vux.loading.show({text: '加载中'})
+      let params = api.getParam('zh04', {'zh_id': localStorage.getItem('userid')})
+      api.postData(this, params).then((data) => {
+        this.$vux.loading.hide()
+        if (data.code === 0) {
+          this.userInfo = data.data[0]
+        } else {
+          this.$vux.toast.text(data.msg, '')
+        }
+      }).catch((code) => {
+        this.$vux.loading.hide()
+        this.$vux.toast.text(code, '')
+      })
+    },
     // 查询申请状态及历史订单数
     loadOrderInfo () {
       this.$vux.loading.show({text: '加载中'})
@@ -118,10 +140,26 @@ export default {
         this.$vux.toast.text(code, '')
       })
     },
-    // 查询历史订单
+    /*    // 查询历史订单
     loadOrderList () {
       this.$vux.loading.show({text: '加载中'})
       let params = api.getParam('app002')
+      api.postData(this, params).then((data) => {
+        this.$vux.loading.hide()
+        if (data.code === 0) {
+          this.orderList = data.data.rows
+        } else {
+          this.$vux.toast.text(data.msg, '')
+        }
+      }).catch((code) => {
+        this.$vux.loading.hide()
+        this.$vux.toast.text(code, '')
+      })
+    }, */
+    // 当前正在租车的订单
+    loadCurrentOrder () {
+      this.$vux.loading.show({text: '加载中'})
+      let params = api.getParam('dd00')
       api.postData(this, params).then((data) => {
         this.$vux.loading.hide()
         if (data.code === 0) {
