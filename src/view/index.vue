@@ -11,7 +11,7 @@
            <p>{{userInfo.zhtypelabler}}</p>
            <p>{{userInfo.dwlabler}}</p>
          </div>
-         <div v-if="false" class="finish_info">
+         <div v-if="!isUse" class="finish_info">
            <p style="margin-bottom: 20px">待完成任务：<span style="color: #ff0000">4</span></p>
            <p>已完成任务：<span>120</span></p>
          </div>
@@ -21,7 +21,7 @@
          </div>
        </div>
      <!--  如果是员工就显示-->
-       <div class="staff_content" v-if="true">
+       <div class="staff_content" v-if="!isUse">
          <div class="title ">
            <span>当前订单</span>  <label class="right_text">上门交车</label>
          </div>
@@ -43,8 +43,8 @@
          </Group>
          <div class="btn_custom">客户还车</div>
        </div>
-      <!--如果是用户就显示-->
-       <div class="custom_content" v-if="false">
+      <!--如果是用车单位就显示-->
+       <div class="custom_content" v-if="isUse">
           <div class="flex_wrapper">
             <div class="item">
               <img src="../assets/zuche.png"/>
@@ -95,6 +95,7 @@ export default {
         dwlabler: '', // 单位
         zh_tx_fj: '' // 头像
       },
+      isUse: true, // 是否为用车单位
       orderInfo: {
         state: '',
         ddcount: ''
@@ -116,6 +117,11 @@ export default {
         this.$vux.loading.hide()
         if (data.code === 0) {
           this.userInfo = data.data[0]
+          if (this.userInfo.zhtype === '04' || this.userInfo.zhtype === '05') {
+            this.isUse = true
+          } else {
+            this.isUse = false
+          }
         } else {
           this.$vux.toast.text(data.msg, '')
         }

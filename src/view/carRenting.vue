@@ -12,6 +12,7 @@
             <popup-picker title="租赁方式" :data="list1" v-model="queryParam.rentWay"  placeholder="请选择"></popup-picker>
             <popup-picker title="需要司机" :data="list2" v-model="queryParam.needDriver"  placeholder="请选择"></popup-picker>
             <datetime  title="租赁起始日期" v-model="queryParam.startDate" placeholder="请选择"> </datetime>
+            <datetime v-model="queryParam.endDate" placeholder="请选择"> </datetime>
             <x-input  title="联系人" v-model="queryParam.relateName"></x-input>
             <x-input  title="联系电话" v-model="queryParam.relateTel"></x-input>
             <x-input  title="车辆用途" v-model="queryParam.purpose"></x-input>
