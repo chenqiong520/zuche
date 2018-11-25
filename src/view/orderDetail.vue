@@ -3,24 +3,26 @@
     <x-header :left-options="{backText: ''}">订单详情
       <x-icon slot="right" type="navicon" size="35" style="fill:#616161;position:relative;top:-8px;left:-3px;"></x-icon>
     </x-header>
-    <div class="order_info">
-      <div><span>车型：</span><span>福特福瑞斯</span></div>
-      <div><span>租车起止日期：</span><span>2018-01-02---2019-02-03</span></div>
-      <div><span>时长：</span><span>400天</span></div>
-      <div><span>价格总计：</span><span>19823</span></div>
+    <div class="main_content_wrapper">
+      <div class="order_info">
+        <div><span>车型：</span><span>福特福瑞斯</span></div>
+        <div><span>租车起止日期：</span><span>2018-01-02---2019-02-03</span></div>
+        <div><span>时长：</span><span>400天</span></div>
+        <div><span>价格总计：</span><span>19823</span></div>
+      </div>
+      <div class="flex_wrapper">
+        <div class="img_item"><img src="../assets/zuche.png"/></div>
+        <div class="img_item"><img src="../assets/zuche.png"/></div>
+        <div class="img_item"><img src="../assets/zuche.png"/></div>
+      </div>
+      <div class="flex_wrapper">
+        <div class="img_item"><img src="../assets/zuche.png"/></div>
+        <div class="img_item"><img src="../assets/zuche.png"/></div>
+        <div class="img_item"><img src="../assets/zuche.png"/></div>
+      </div>
+      <div class="btn">申请交车</div>
     </div>
-    <div class="flex_wrapper">
-      <div class="img_item"><img src="../assets/zuche.png"/></div>
-      <div class="img_item"><img src="../assets/zuche.png"/></div>
-      <div class="img_item"><img src="../assets/zuche.png"/></div>
-    </div>
-    <div class="flex_wrapper">
-      <div class="img_item"><img src="../assets/zuche.png"/></div>
-      <div class="img_item"><img src="../assets/zuche.png"/></div>
-      <div class="img_item"><img src="../assets/zuche.png"/></div>
-    </div>
-    <div class="btn">申请交车</div>
-  </div>
+   </div>
 </template>
 
 <script>
@@ -33,7 +35,6 @@ export default {
 
 <style scoped lang="less">
 .order_detail {
-  padding-top: 46px;
   padding-bottom: 50px;
   .order_info {
     background-color: #fff;
@@ -58,7 +59,7 @@ export default {
     }
   }
   .btn{
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     color: #fff;
@@ -66,6 +67,7 @@ export default {
     line-height: 44px;
     text-align: center;
     background-color: #0084ff;
+    z-index: 1;
   }
 }
 </style>

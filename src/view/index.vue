@@ -11,17 +11,17 @@
            <p>{{userInfo.zhtypelabler}}</p>
            <p>{{userInfo.dwlabler}}</p>
          </div>
-         <div v-if="false" class="finish_info">
-           <p style="margin-bottom: 20px">待完成任务：<span style="color: #ff0000">4</span></p>
-           <p>已完成任务：<span>120</span></p>
+         <div v-if="!isUse" class="finish_info">
+           <p style="margin-bottom: 20px">待完成任务：<span style="color: #ff0000">0</span></p>
+           <p>已完成任务：<span>0</span></p>
          </div>
-         <div v-else class="finish_info">
+         <div v-if="isUse" class="finish_info">
            <p style="margin-bottom: 20px">租车状态：<span style="color: #ff0000">{{orderInfo.state}}</span></p>
            <p>历史订单数量：<span>{{orderInfo.ddcount}}</span></p>
          </div>
        </div>
-     <!--  如果是员工就显示-->
-       <div class="staff_content" v-if="true">
+     <!--  如果是租赁单位就显示-->
+       <div class="staff_content" v-if="!isUse">
          <div class="title ">
            <span>当前订单</span>  <label class="right_text">上门交车</label>
          </div>
@@ -32,7 +32,7 @@
            <cell title="电话" :value="userInfo.zh_xm"></cell>
            <cell title="车牌号" :value="userInfo.zh_xm"></cell>
          </Group>
-         <div class="btn_return_car">拍照还车</div>
+         <div class="btn_return_car" @click="returnCar">拍照还车</div>
          <div class="title ">
            <span>待完成任务</span>
          </div>
@@ -43,18 +43,18 @@
          </Group>
          <div class="btn_custom">客户还车</div>
        </div>
-      <!--如果是用户就显示-->
-       <div class="custom_content" v-if="false">
+      <!--如果是用车用户就显示-->
+       <div class="custom_content" v-if="isUse">
           <div class="flex_wrapper">
-            <div class="item">
+            <div class="item" @click="toMenu('carRenting')">
               <img src="../assets/zuche.png"/>
               <div>租车</div>
             </div>
-            <div class="item">
+            <div class="item" @click="toMenu('shenpi')">
               <img src="../assets/shenpi.png"/>
               <div>审批</div>
             </div>
-            <div class="item">
+            <div class="item" @click="toMenu('orderList')">
               <img src="../assets/lishidingdan.png"/>
               <div>历史订单</div>
             </div>
@@ -66,10 +66,11 @@
            <span>租赁订单</span> <label style="float:right; color: #0084ff">详情》</label>
          </div>
          <Group class="title_group">
-           <cell title="订单号" :value="userInfo.zh_xm"></cell>
-           <cell title="到期时间" :value="userInfo.zh_xm"></cell>
-           <cell title="租赁车型" :value="userInfo.zh_xm"></cell>
-           <cell title="订单持续日期" :value="userInfo.zh_xm"></cell>
+           <cell title="订单号" :value="orderListFirst.ddid"></cell>
+           <cell title="下单时间" :value="orderListFirst.xdsj"></cell>
+           <cell title="租赁方式" :value="orderListFirst.jffs"></cell>
+           <cell title="租赁车型" :value="fmt(orderListFirst)"></cell>
+           <cell title="订单持续日期" :value="orderListFirst.zh_xm"></cell>
          </Group>
          <div class="btn_group">
            <span class="btn">延期</span>
@@ -99,15 +100,19 @@ export default {
         state: '',
         ddcount: ''
       },
-      orderList: []
+      isUse: false, // 是否是用车单位
+      orderListFirst: {}
     }
   },
   mounted () {
     this.getUserInfo()
-    this.loadOrderInfo()
+    // this.loadOrderInfo()
     this.loadCurrentOrder()
   },
   methods: {
+    fmt (info) {
+      return info.car_pp + info.car_xh
+    },
     // 获取用户基本信息
     getUserInfo () {
       this.$vux.loading.show({text: '加载中'})
@@ -116,6 +121,11 @@ export default {
         this.$vux.loading.hide()
         if (data.code === 0) {
           this.userInfo = data.data[0]
+          if (data.data[0].zhtype === '04' || data.data[0].zhtype === '05') {
+            this.isUse = true
+          } else {
+            this.isUse = false
+          }
         } else {
           this.$vux.toast.text(data.msg, '')
         }
@@ -156,14 +166,14 @@ export default {
         this.$vux.toast.text(code, '')
       })
     }, */
-    // 当前正在租车的订单
+    // 当前最新的一条订单租车的订单
     loadCurrentOrder () {
       this.$vux.loading.show({text: '加载中'})
-      let params = api.getParam('dd00')
+      let params = api.getParam('dd00', {userid: localStorage.getItem('userid')})
       api.postData(this, params).then((data) => {
         this.$vux.loading.hide()
         if (data.code === 0) {
-          this.orderList = data.data.rows
+          this.orderListFirst = data.data[0]
         } else {
           this.$vux.toast.text(data.msg, '')
         }
@@ -171,6 +181,12 @@ export default {
         this.$vux.loading.hide()
         this.$vux.toast.text(code, '')
       })
+    },
+    toMenu (name) {
+      this.$router.push('/' + name)
+    },
+    returnCar () {
+      this.$router.push('/orderDetail')
     }
   }
 }

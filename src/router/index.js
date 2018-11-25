@@ -14,7 +14,7 @@ import carRenting from '@/view/carRenting'
 import shenpi from '@/view/shenpi'
 
 /** 执行中**/
-import zhixingzhong from '@/view/zhixingzhong'
+import orderList from '@/view/orderList'
 
 /** 订单详情**/
 import orderDetail from '@/view/orderDetail'
@@ -42,9 +42,9 @@ export default new Router({
       name: 'shenpi',
       component: shenpi
     }, {
-      path: '/zhixingzhong',
-      name: 'zhixingzhong',
-      component: zhixingzhong
+      path: '/orderList',
+      name: 'orderList',
+      component: orderList
     }, {
       path: '/orderDetail',
       name: 'orderDetail',

@@ -1,6 +1,6 @@
 <template>
    <div class="zxz">
-     <x-header :left-options="{backText: ''}">执行中
+     <x-header :left-options="{backText: ''}">历史订单
        <x-icon slot="right" type="navicon" size="35" style="fill:#616161;position:relative;top:-8px;left:-3px;"></x-icon>
      </x-header>
      <div>
