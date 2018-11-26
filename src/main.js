@@ -7,6 +7,7 @@ import 'babel-polyfill'
 import store from './store/store'
 import {ToastPlugin, AlertPlugin, ConfirmPlugin, LoadingPlugin, WechatPlugin, AjaxPlugin} from 'vux'
 import tools from './router/tool'
+import BaiduMap from 'vue-baidu-map'
 
 Vue.config.productionTip = false
 
@@ -17,6 +18,9 @@ Vue.use(LoadingPlugin)
 Vue.use(WechatPlugin)
 Vue.use(AjaxPlugin)
 Vue.use(tools)
+Vue.use(BaiduMap, {
+  ak: 'I3HUMZ4V4sDDgRKTKmbzhzsd2nlCGEle'
+})
 
 // 返回状态判断(添加响应拦截器)
 AjaxPlugin.$http.interceptors.response.use(
