@@ -11,14 +11,14 @@
         <div><span>价格总计：</span><span>19823</span></div>
       </div>
       <div class="flex_wrapper">
-        <div class="img_item"><img src="../assets/zuche.png"/></div>
-        <div class="img_item"><img src="../assets/zuche.png"/></div>
-        <div class="img_item"><img src="../assets/zuche.png"/></div>
+       <image-upload class="img_item" :imgObj="img1"></image-upload>
+        <image-upload class="img_item" :imgObj="img2"></image-upload>
+        <image-upload class="img_item" :imgObj="img3"></image-upload>
       </div>
       <div class="flex_wrapper">
-        <div class="img_item"><img src="../assets/zuche.png"/></div>
-        <div class="img_item"><img src="../assets/zuche.png"/></div>
-        <div class="img_item"><img src="../assets/zuche.png"/></div>
+        <image-upload class="img_item" :imgObj="img4"></image-upload>
+        <image-upload class="img_item" :imgObj="img5"></image-upload>
+        <image-upload class="img_item" :imgObj="img6"></image-upload>
       </div>
       <div class="btn">申请交车</div>
     </div>
@@ -27,9 +27,38 @@
 
 <script>
 import {XHeader} from 'vux'
+import imageUpload from '../components/imageUpload'
 export default {
   name: 'orderDetail',
-  components: {XHeader}
+  components: {XHeader, imageUpload},
+  data () {
+    return {
+      img1: {
+        id: 1,
+        url: ''
+      },
+      img2: {
+        id: 2,
+        url: ''
+      },
+      img3: {
+        id: 3,
+        url: ''
+      },
+      img4: {
+        id: 4,
+        url: ''
+      },
+      img5: {
+        id: 5,
+        url: ''
+      },
+      img6: {
+        id: 6,
+        url: ''
+      }
+    }
+  }
 }
 </script>
 
@@ -52,6 +81,7 @@ export default {
     .img_item {
       flex: 1;
       text-align: center;
+      height: 73px;
       img {
         width: 105px;
         height: 73px;

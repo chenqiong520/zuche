@@ -8,6 +8,7 @@ import store from './store/store'
 import {ToastPlugin, AlertPlugin, ConfirmPlugin, LoadingPlugin, WechatPlugin, AjaxPlugin} from 'vux'
 import tools from './router/tool'
 import BaiduMap from 'vue-baidu-map'
+import '../static/icon/iconfont.css'
 
 Vue.config.productionTip = false
 
