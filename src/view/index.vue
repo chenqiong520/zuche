@@ -106,7 +106,7 @@ export default {
   },
   mounted () {
     this.getUserInfo()
-    // this.loadOrderInfo()
+    this.loadOrderInfo()
     this.loadCurrentOrder()
   },
   methods: {
@@ -150,22 +150,6 @@ export default {
         this.$vux.toast.text(code, '')
       })
     },
-    /*    // 查询历史订单
-    loadOrderList () {
-      this.$vux.loading.show({text: '加载中'})
-      let params = api.getParam('app002')
-      api.postData(this, params).then((data) => {
-        this.$vux.loading.hide()
-        if (data.code === 0) {
-          this.orderList = data.data.rows
-        } else {
-          this.$vux.toast.text(data.msg, '')
-        }
-      }).catch((code) => {
-        this.$vux.loading.hide()
-        this.$vux.toast.text(code, '')
-      })
-    }, */
     // 当前最新的一条订单租车的订单
     loadCurrentOrder () {
       this.$vux.loading.show({text: '加载中'})

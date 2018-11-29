@@ -48,9 +48,6 @@
             <x-input  title="目的地" v-model="queryParam.mdd" ></x-input>
           </div>
         </group>
-        <baidu-map v-show="mapShow" class="map">
-          <bm-view style="width: 100%; height:100%;"></bm-view>
-        </baidu-map>
         <div class="btn_next submit_order" @click="submitOrder">提交订单</div>
       </div>
     </div>
@@ -107,6 +104,7 @@ export default {
   },
   mounted () {},
   methods: {
+    // 根据租赁方式添加列表
     selectRentWay (way) {
       this.queryParam.jffs = way[0]
       this.$vux.loading.show({text: '加载中'})
@@ -159,10 +157,16 @@ export default {
       }
       this.step = 1
     },
+    // 选择车辆
     selectCar (item, index) {
       this.queryParam.sqsl = item.sqsl
       this.queryParam.car_pp = item.car_pp
       this.queryParam.car_xh = item.car_xh
+      this.carList.forEach((e) => {
+        if (e.id !== item.id) {
+          e.sqsl = 0
+        }
+      })
     },
     submitOrder () {
       this.$vux.loading.show({text: '加载中'})

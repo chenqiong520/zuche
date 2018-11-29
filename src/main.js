@@ -19,7 +19,7 @@ Vue.use(WechatPlugin)
 Vue.use(AjaxPlugin)
 Vue.use(tools)
 Vue.use(BaiduMap, {
-  ak: 'I3HUMZ4V4sDDgRKTKmbzhzsd2nlCGEle'
+  ak: 'OrqP141mQUPojuhgWQgkepEI0nmorLlF'
 })
 
 // 返回状态判断(添加响应拦截器)
