@@ -22,7 +22,7 @@ Vue.use(tools)
 Vue.use(BaiduMap, {
   ak: 'OrqP141mQUPojuhgWQgkepEI0nmorLlF'
 })
-
+AjaxPlugin.$http.defaults.timeout = 10000
 // 返回状态判断(添加响应拦截器)
 AjaxPlugin.$http.interceptors.response.use(
   res => {

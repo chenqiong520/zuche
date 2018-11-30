@@ -5,41 +5,45 @@
      </x-header>
      <div>
        <div class="title no_margin">
-         <span>订单号</span> <label>20180909675723</label>
+         <span>订单号</span> <label>{{orderInfo.ddid}}</label>
        </div>
        <group  class="title_group">
-         <cell title="车型"  :value="queryParam.rentWay"></cell>
-         <cell title="租车起止日期"  :value="queryParam.needDriver" ></cell>
-         <cell  title="时长" :value="queryParam.startDate" > </cell>
-         <cell  title="价格总计" :value="queryParam.relateName"></cell>
-         <cell  title="申请部门" :value="queryParam.relateTel"></cell>
-         <cell  title="申请人" :value="queryParam.purpose"></cell>
-         <cell  title="订单进度" :value="queryParam.purpose"></cell>
-         <cell  title="驾驶员姓名" :value="queryParam.purpose"></cell>
-         <cell  title="驾驶员联系方式" :value="queryParam.purpose"></cell>
-         <cell  title="取车时间" :value="queryParam.purpose"></cell>
-         <cell  title="取车地址" :value="queryParam.purpose"></cell>
+         <cell title="车型"  :value="orderInfo.car_xh"></cell>
+         <cell title="租车起止日期"  :value="orderInfo.needDriver" ></cell>
+         <cell  title="时长" :value="orderInfo.startDate" > </cell>
+         <cell  title="价格总计" :value="orderInfo.relateName"></cell>
+         <cell  title="申请部门" :value="orderInfo.relateTel"></cell>
+         <cell  title="申请人" :value="orderInfo.sqr"></cell>
+         <cell  title="订单进度" :value="orderInfo.purpose"></cell>
+         <cell  title="驾驶员姓名" :value="orderInfo.purpose"></cell>
+         <cell  title="驾驶员联系方式" :value="orderInfo.lxrdh"></cell>
+         <cell  title="取车时间" :value="orderInfo.purpose"></cell>
+         <cell  title="取车地址" :value="orderInfo.purpose"></cell>
        </group>
        <div class="btn_group">
          <x-button class="pass">通过</x-button>
        </div>
      </div>
      <div>
-       <div class="order_item"><span>订单号：2018090953123</span><span class="right">已结算</span></div>
-       <div class="order_item"><span>订单号：2018090953123</span><span class="right">已结算</span></div>
-       <div class="order_item"><span>订单号：2018090953123</span><span class="right">已结算</span></div>
+       <div class="order_item" v-for="(item, index) in orderList" :key="index" @click="detailOrder(item)">
+         <span>订单号：{{item.ddid}}</span><span class="right">{{item.sqzt}}</span>
+       </div>
      </div>
    </div>
 </template>
 
 <script>
 import {XHeader, Group, Cell, XButton} from 'vux'
+import api from '../router/api'
 export default {
   name: 'orderDetail',
   components: {XHeader, Group, Cell, XButton},
   data () {
     return {
-      queryParam: {
+      orderInfo: {
+        ddid: '',
+        sqr: '',
+        lxrdh: '',
         rentWay: '通过',
         needDriver: '',
         startDate: '',
@@ -49,7 +53,31 @@ export default {
         purpose: '',
         startPlace: '',
         endPlace: ''
-      }
+      },
+      orderList: []
+    }
+  },
+  mounted () {
+    this.queryOrderList()
+  },
+  methods: {
+    queryOrderList () {
+      this.$vux.loading.show({text: '加载中'})
+      let params = api.getParam('dd08')
+      api.postData(this, params).then((data) => {
+        this.$vux.loading.hide()
+        if (data.code === 0) {
+          this.orderList = data.data
+        } else {
+          this.$vux.toast.text(data.msg, '')
+        }
+      }).catch((code) => {
+        this.$vux.loading.hide()
+        this.$vux.toast.text(code, '')
+      })
+    },
+    detailOrder (item) {
+      this.orderInfo = item
     }
   }
 }

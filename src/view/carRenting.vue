@@ -6,7 +6,7 @@
       <x-header  v-show="step===1" :left-options="{backText: '', preventGoBack: true}" @on-click-back="step = 0">租车
         <x-icon slot="right" type="navicon" size="35" style="fill:#616161;position:relative;top:-8px;left:-3px;"></x-icon>
       </x-header>
-      <div v-show="step===1">
+      <div v-show="step===0">
         <div>
           <div class="title no_margin">
             <span>租车</span>
@@ -37,7 +37,7 @@
         <p class="notice_msg">超里程数：100公里/天，超过标准按照公里价格计算</p>
         <div class="btn_next" @click="nextStep">下一步</div>
       </div>
-      <div v-show="step ===0" class="next_step">
+      <div v-show="step ===1" class="next_step">
         <group class="title_group">
           <div class="item_wrapper">
             <img class="icon_img" src="../assets/sfd.png">
