@@ -117,3 +117,6 @@ p {
   top:46px;
   overflow: auto;
 }
+.map .search_panel a {
+  display: none;
+}

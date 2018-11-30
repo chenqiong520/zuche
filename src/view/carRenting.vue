@@ -6,7 +6,7 @@
       <x-header  v-show="step===1" :left-options="{backText: '', preventGoBack: true}" @on-click-back="step = 0">租车
         <x-icon slot="right" type="navicon" size="35" style="fill:#616161;position:relative;top:-8px;left:-3px;"></x-icon>
       </x-header>
-      <div v-show="step===0">
+      <div v-show="step===1">
         <div>
           <div class="title no_margin">
             <span>租车</span>
@@ -37,17 +37,35 @@
         <p class="notice_msg">超里程数：100公里/天，超过标准按照公里价格计算</p>
         <div class="btn_next" @click="nextStep">下一步</div>
       </div>
-      <div v-show="step ===1" class="next_step">
+      <div v-show="step ===0" class="next_step">
         <group class="title_group">
           <div class="item_wrapper">
             <img class="icon_img" src="../assets/sfd.png">
-            <x-input title="始发地" v-model="queryParam.jcdd" @click="mapShow=true"></x-input>
+            <x-input title="始发地" v-model="queryParam.jcdd" @on-change="changeInput"></x-input>
           </div>
           <div class="item_wrapper">
             <img class="icon_img" src="../assets/mdd.png">
-            <x-input  title="目的地" v-model="queryParam.mdd" ></x-input>
+            <x-input  title="目的地" v-model="queryParam.mdd" @on-change="changeMdd"></x-input>
           </div>
         </group>
+        <baidu-map class="map" center="抚州" :zoom="zoom" @ready="handler">
+          <!--BmView 是用于渲染百度地图实例可视化区域的容器，通常与 LocalSearch 等会输出其它视图的组件结合使用。-->
+          <bm-view style="width: 100%; height:100%;"></bm-view>
+          <bm-marker :position="{lng: center.lng, lat: center.lat}" :dragging="false" animation="BMAP_ANIMATION_BOUNCE">
+            <bm-label :content="mapcontent" :labelStyle="{fontFamily:'黑体',borderColor:'white',color: 'black', fontSize : '18px',fontWeight:'bold',padding: '5px'}" :offset="{width: 0, height: 30}"/>
+          </bm-marker>
+          <bm-driving
+            :start="drivingParam.start"
+            :end="drivingParam.end"
+            :startCity="drivingParam.startCity"
+            :endCity="drivingParam.endCity"
+            :auto-viewport="true"
+            @markersset="markersset"
+          ></bm-driving>
+          <!-- 地区检索控件-->
+          <bm-local-search class="search_panel" :class="isChangeMdd ? 'mdd_panel': ''" @infohtmlset="infohtmlset" :keyword="keyword" :auto-viewport="true"
+                           location="抚州" :pageCapacity="6" :panel="showPanel"></bm-local-search>
+        </baidu-map>
         <div class="btn_next submit_order" @click="submitOrder">提交订单</div>
       </div>
     </div>
@@ -99,7 +117,24 @@ export default {
         jcdd_jwd: '',
         mdd: '', // 目的地
         mdd_jwd: ''
-      }
+      },
+      zoom: 15,
+      center: {
+        lng: 116.364537,
+        lat: 27.954893
+      },
+      drivingParam: {
+        start: '',
+        startCity: '',
+        end: '',
+        endCity: ''
+      },
+      keyword: '',
+      mapcontent: '抚州市',
+      showPanel: false,
+      isInput: true,
+      isChangeMdd: false,
+      map: ''
     }
   },
   mounted () {},
@@ -181,6 +216,53 @@ export default {
         this.$vux.loading.hide()
         this.$vux.toast.text(code, '')
       })
+    },
+    changeInput () {
+      if (this.isInput) {
+        this.showPanel = true
+        this.keyword = this.queryParam.jcdd
+        this.isChangeMdd = false
+      } else {
+        this.isInput = true
+      }
+    },
+    changeMdd () {
+      if (this.isInput) {
+        this.isChangeMdd = true
+        this.showPanel = true
+        this.keyword = this.queryParam.mdd
+      } else {
+        this.isInput = true
+      }
+    },
+    // 结果面板列表的点击事件
+    infohtmlset (point) {
+      this.center.lat = point.point.lat
+      this.center.lng = point.point.lng
+      this.mapcontent = point.title
+      this.keyword = ''
+      this.showPanel = false
+      this.isInput = false
+      this.map.Oa = 19
+      if (this.isChangeMdd) {
+        this.queryParam.mdd = point.title
+        this.queryParam.mdd = point.title
+        this.drivingParam.end = point.point
+        this.drivingParam.endCity = point.city
+      } else {
+        this.queryParam.jcdd = point.title
+        this.queryParam.jcdd = point.title
+        this.drivingParam.start = point.point
+        this.drivingParam.startCity = point.city
+      }
+    },
+    handler ({BMap, map}) {
+      this.map = map
+    },
+    markersset () {
+      this.center.lat = ''
+      this.center.lng = ''
+      this.mapcontent = ''
     }
   }
 }
@@ -260,9 +342,16 @@ export default {
     }
   }
   .map {
-    height: 500px;
-    width: 500px;
-    position: fixed;
+    height:  calc(100% - 134px);
+    width: 100%;
+  }
+  .search_panel {
+    position: absolute;
+    width: 100%;
+    top:44px;
+    &.mdd_panel {
+      top: 86.5px
+    }
   }
 }
 </style>
