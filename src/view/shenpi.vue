@@ -8,10 +8,10 @@
         <tab-item selected>待审批订单</tab-item>
         <tab-item>审批需求</tab-item>
       </tab>
-      <el-collapse accordion >
-        <el-collapse-item   v-for="(item,index) in list" :key="index">
+      <el-collapse accordion  v-model="activeName" @change="handleChange" >
+        <el-collapse-item   v-for="(item,index) in list" :key="index" :name="index">
           <template slot="title">
-            <div  style="font-size: 15px">订单号: <span style="margin-right: 10px"> {{item.sqid}}</span></div>
+            <div  style="font-size: 15px">订单号: <span style=" display:inline-block;margin-left: 10px"> {{item.sqid}}</span></div>
           </template>
           <group class="title_group">
             <cell title="申请人" :value="item.sqr"></cell>
@@ -48,6 +48,7 @@ export default {
         rentTimes: '',
         duration: ''
       },
+      activeName: '',
       list: []
     }
   },
@@ -55,7 +56,11 @@ export default {
     this.queryList()
   },
   methods: {
-    handleChange () {},
+    handleChange () {
+      if (this.activeName || this.activeName === 0) {
+        console.log(this.list[this.activeName])
+      }
+    },
     fmtSJ (beg, end) {
       return beg.substring(0, 16) + ' - ' + end.substring(0, 16)
     },
