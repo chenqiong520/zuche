@@ -5,7 +5,7 @@
      </x-header>
      <div>
        <div class="title no_margin">
-         <span>订单号</span> <label>{{orderInfo.ddid}}</label>
+         <span>订单号</span> <label style="margin-left: 10px">{{orderInfo.ddid}}</label>
        </div>
        <group  class="title_group">
          <cell title="车型"  :value="orderInfo.car_xh"></cell>

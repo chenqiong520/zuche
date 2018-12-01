@@ -5,6 +5,8 @@ import App from './App'
 import router from './router'
 import 'babel-polyfill'
 import store from './store/store'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import {ToastPlugin, AlertPlugin, ConfirmPlugin, LoadingPlugin, WechatPlugin, AjaxPlugin} from 'vux'
 import tools from './router/tool'
 import BaiduMap from 'vue-baidu-map'
@@ -13,6 +15,7 @@ import '../static/icon/iconfont.css'
 Vue.config.productionTip = false
 
 Vue.use(ToastPlugin)
+Vue.use(ElementUI)
 Vue.use(AlertPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(LoadingPlugin)

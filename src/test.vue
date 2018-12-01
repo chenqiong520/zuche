@@ -99,7 +99,65 @@ export default {
       this.center.lat = ''
       this.center.lng = ''
       this.mapcontent = ''
-    }
+    },
+    handleAvatarSuccess(res, file) {
+      //console.log("file.filename:"+file.filename);
+      //console.log("file.raw:"+file.raw);
+      this.imageUrl = URL.createObjectURL(file.raw);
+      this.$message('上传成功');
+      //console.log("this.imageUrl:"+this.imageUrl);
+    },
+    handleAvatarSuccessUpdate(res, file) {
+      //console.log("file.filename:"+file.filename);
+      console.log("this.imageUrlupdate:"+URL.createObjectURL(file.raw));
+      this.imageUrlupdate=this.txurl;
+      this.imageUrlUpdate = URL.createObjectURL(file.raw);
+      this.$message('上传成功');
+      //console.log("this.imageUrl:"+this.imageUrl);
+    },
+    beforeAvatarUpload(file) {
+      var filename="tx_"+this.getTime()+Number.parseInt(Math.random()*1000,10);
+      var filetype=file.type;
+      var filetypename="."+filetype.substr(filetype.indexOf("/")+1,filetype.length);
+      //console.log("file.filetypename:"+filetypename);
+      //console.log("file.filename:"+filename);
+      this.postData.key = filename+filetypename;
+      this.txurl="http://img.cssbsb.top/"+filename+filetypename;
+      const isJPG = file.type === 'image/jpeg';
+      const isPng = file.type === 'image/png';
+      const isjpg = file.type === 'image/jpg';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isJPG && !isPng && !isjpg) {
+        this.$message.error('上传头像图片只能是 jpeg,png,jpg格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!');
+      }
+      return (isJPG||isPng||isjpg) && isLt2M;
+    },
+    beforeAvatarUploadUpdate(file) {
+      var filename="tx_"+this.getTime()+Number.parseInt(Math.random()*1000,10);
+      var filetype=file.type;
+      var filetypename="."+filetype.substr(filetype.indexOf("/")+1,filetype.length);
+      //console.log("file.filetypename:"+filetypename);
+      //console.log("file.filename:"+filename);
+      this.postData.key = filename+filetypename;
+      this.txurl="http://img.cssbsb.top/
+
+      "+filename+filetypename;
+      const isJPG = file.type === 'image/jpeg';
+      const isPng = file.type === 'image/png';
+      const isjpg = file.type === 'image/jpg';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isJPG && !isPng && !isjpg) {
+        this.$message.error('上传头像图片只能是 jpeg,png,jpg格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!');
+      }
+      return (isJPG||isPng||isjpg) && isLt2M;
+    },
+
   }
 }
 </script>

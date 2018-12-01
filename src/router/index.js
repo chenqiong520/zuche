@@ -19,7 +19,6 @@ import orderList from '@/view/orderList'
 /** 订单详情**/
 import orderDetail from '@/view/orderDetail'
 
-import test from '@/test'
 Vue.use(Router)
 
 export default new Router({
@@ -51,10 +50,6 @@ export default new Router({
       path: '/orderDetail',
       name: 'orderDetail',
       component: orderDetail
-    }, {
-      path: '/test',
-      name: 'test',
-      component: test
     }
   ]
 })

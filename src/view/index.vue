@@ -12,8 +12,8 @@
            <p>{{userInfo.dwlabler}}</p>
          </div>
          <div v-if="!isUse" class="finish_info">
-           <p style="margin-bottom: 20px">待完成任务：<span style="color: #ff0000">0</span></p>
-           <p>已完成任务：<span>0</span></p>
+           <p style="margin-bottom: 20px">待完成任务：<span style="color: #ff0000">{{dwcrw}}</span></p>
+           <p>已完成任务：<span>{{ywcrw}}</span></p>
          </div>
          <div v-if="isUse" class="finish_info">
            <p style="margin-bottom: 20px">租车状态：<span style="color: #ff0000">{{orderInfo.state}}</span></p>
@@ -23,25 +23,24 @@
      <!--  如果是租赁单位就显示-->
        <div class="staff_content" v-if="!isUse">
          <div class="title ">
-           <span>当前订单</span>  <label class="right_text">上门交车</label>
+           <span>当前订单</span>  <label class="right_text">{{currentOrder.rwtype_v}}</label>
          </div>
          <Group class="title_group">
-           <cell title="地点" :value="userInfo.zh_xm"></cell>
-           <cell title="时间" :value="userInfo.zh_xm"></cell>
-           <cell title="姓名" :value="userInfo.zh_xm"></cell>
-           <cell title="电话" :value="userInfo.zh_xm"></cell>
-           <cell title="车牌号" :value="userInfo.zh_xm"></cell>
+           <cell title="品牌" :value="currentOrder.car_pp"></cell>
+           <cell title="车牌号" :value="currentOrder.car_cp"></cell>
+           <cell title="时间" :value="currentOrder.xdsj"></cell>
+           <cell title="联系人" :value="currentOrder.lxr"></cell>
+           <cell title="联系人电话" :value="currentOrder.lxrdh"></cell>
          </Group>
-         <div class="btn_return_car" @click="returnCar">拍照还车</div>
+         <div class="btn_return_car" @click="returnCar(100, currentOrder.ddid)" v-if="currentOrder.rwtype=== '100'">拍照还车</div>
+         <div class="btn_return_car" @click="returnCar(101, currentOrder.ddid)" v-if="currentOrder.rwtype === '101'">拍照出车</div>
          <div class="title ">
            <span>待完成任务</span>
          </div>
          <Group class="title_group">
-           <cell title="上门交车" :value="userInfo.zh_xm"></cell>
-           <cell title="上门还车" :value="userInfo.zh_xm"></cell>
-           <cell title="上门还车" :value="userInfo.zh_xm"></cell>
+           <cell v-for="(item, index) in dwcList" :key="index"  :title="item.rw_context" value="待完成" @click.native="itemDetail(item)"></cell>
          </Group>
-         <div class="btn_custom">客户还车</div>
+         <div class="btn_custom" @click="returnCar(2)">客户还车</div>
        </div>
       <!--如果是用车用户就显示-->
        <div class="custom_content" v-if="isUse">
@@ -74,7 +73,6 @@
          </Group>
          <div class="btn_group">
            <span class="btn">延期</span>
-           <span class="btn">还车</span>
          </div>
        </div>
      </div>
@@ -101,13 +99,17 @@ export default {
         ddcount: ''
       },
       isUse: false, // 是否是用车单位
+      dwcrw: '',
+      ywcrw: '',
+      dwcList: [],
+      currentOrder: {
+        rwtype: '100'
+      },
       orderListFirst: {}
     }
   },
   mounted () {
     this.getUserInfo()
-    this.loadOrderInfo()
-    this.loadCurrentOrder()
   },
   methods: {
     fmt (info) {
@@ -123,8 +125,12 @@ export default {
           this.userInfo = data.data[0]
           if (data.data[0].zhtype === '04' || data.data[0].zhtype === '05') {
             this.isUse = true
+            this.loadOrderInfo()
+            this.loadCurrentOrder()
           } else {
             this.isUse = false
+            this.queryNums()
+            this.queryList()
           }
         } else {
           this.$vux.toast.text(data.msg, '')
@@ -166,11 +172,63 @@ export default {
         this.$vux.toast.text(code, '')
       })
     },
+    // 待完成任务数
+    queryNums () {
+      this.$vux.loading.show({text: '加载中'})
+      let params = api.getParam('tk02', {zh_id: localStorage.getItem('userid')})
+      api.postData(this, params).then((data) => {
+        this.$vux.loading.hide()
+        if (data.code === 0) {
+          this.dwcrw = data.data.num
+          this.ywcrw = data.data.num1
+        } else {
+          this.$vux.toast.text(data.msg, '')
+        }
+      }).catch((code) => {
+        this.$vux.loading.hide()
+        this.$vux.toast.text(code, '')
+      })
+    },
+    // 待完成任务列表
+    queryList () {
+      this.$vux.loading.show({text: '加载中'})
+      let params = api.getParam('tk01', {rwzt: '111', zh_id: localStorage.getItem('userid')})
+      api.postData(this, params).then((data) => {
+        this.$vux.loading.hide()
+        if (data.code === 0) {
+          this.dwcList = data.data
+          this.queryCurrentOrder(data.data[0].yw_id, data.data[0].rwtype)
+        } else {
+          this.$vux.toast.text(data.msg, '')
+        }
+      }).catch((code) => {
+        this.$vux.loading.hide()
+        this.$vux.toast.text(code, '')
+      })
+    },
+    itemDetail (item) {
+      this.queryCurrentOrder(item.yw_id, item.rwtype)
+    },
+    // 当前订单
+    queryCurrentOrder (ywId, rwtype) {
+      let params = api.getParam('tk03', {yw_id: ywId, rwtype: rwtype})
+      api.postData(this, params).then((data) => {
+        if (data.code === 0) {
+          this.currentOrder = data.data[0]
+          window.localStorage['currentOrder'] = JSON.stringify(this.currentOrder)
+        } else {
+          this.$vux.toast.text(data.msg, '')
+        }
+      }).catch((code) => {
+        this.$vux.loading.hide()
+        this.$vux.toast.text(code, '')
+      })
+    },
     toMenu (name) {
       this.$router.push('/' + name)
     },
-    returnCar () {
-      this.$router.push('/orderDetail')
+    returnCar (type, ddid) {
+      this.$router.push('/orderDetail?type=' + type + '&ddid=' + ddid)
     }
   }
 }
