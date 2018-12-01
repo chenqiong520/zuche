@@ -8,15 +8,25 @@
         <tab-item selected>待审批订单</tab-item>
         <tab-item>审批需求</tab-item>
       </tab>
-      <group class="title_group">
-        <cell title="订单号" v-model="approveParam.orderNo"></cell>
-        <cell title="租车起止时间" v-model="approveParam.orderNo"></cell>
-        <cell title="时长" v-model="approveParam.orderNo"></cell>
-        <cell title="价格总计" v-model="approveParam.orderNo"></cell>
-        <cell title="审计部门" v-model="approveParam.orderNo"></cell>
-        <cell title="申请人" v-model="approveParam.orderNo"></cell>
-        <cell title="订单进度" v-model="approveParam.orderNo"></cell>
-      </group>
+      <el-collapse accordion >
+        <el-collapse-item   v-for="(item,index) in list" :key="index">
+          <template slot="title">
+            <div  style="font-size: 15px">订单号: <span style="margin-right: 10px"> {{item.sqid}}</span></div>
+          </template>
+          <group class="title_group">
+            <cell title="申请人" :value="item.sqr"></cell>
+            <cell title="申请人电话" :value="item.sqrdh"></cell>
+            <cell title="计费方式" :value="item.jffs"></cell>
+            <cell title="用车时间" :value =" fmtSJ(item.scsj_beg,item.scsj_end)"></cell>
+            <cell title="车辆用途" :value="item.clyt"></cell>
+            <cell title="车辆型号" :value="fmtXH(item)"></cell>
+            <cell title="申请台数" :value="item.sqsl"></cell>
+            <cell title="接车地点" :value="item.jcdd"></cell>
+            <cell title="目的地" :value= "item.mdd"></cell>
+            <cell title="是否需要司机" :value ="item.xysj"></cell>
+          </group>
+        </el-collapse-item>
+      </el-collapse>
       <div class="btn_group">
         <x-button class="pass">通过</x-button>
         <x-button class="failed"> 不通过</x-button>
@@ -27,6 +37,7 @@
 
 <script>
 import {XHeader, Group, Cell, XButton, Tab, TabItem} from 'vux'
+import api from '../router/api'
 export default {
   name: 'shenpi',
   components: {XHeader, Group, Cell, XButton, Tab, TabItem},
@@ -36,7 +47,35 @@ export default {
         orderNo: '',
         rentTimes: '',
         duration: ''
-      }
+      },
+      list: []
+    }
+  },
+  mounted () {
+    this.queryList()
+  },
+  methods: {
+    handleChange () {},
+    fmtSJ (beg, end) {
+      return beg.substring(0, 16) + ' - ' + end.substring(0, 16)
+    },
+    fmtXH (item) {
+      return item.car_pp + item.car_xh
+    },
+    queryList () {
+      this.$vux.loading.show({text: '加载中'})
+      let params = api.getParam('app006', {ysh: '0'})
+      api.postData(this, params).then((data) => {
+        this.$vux.loading.hide()
+        if (data.code === 0) {
+          this.list = data.data.rows
+        } else {
+          this.$vux.toast.text(data.msg, '')
+        }
+      }).catch((code) => {
+        this.$vux.loading.hide()
+        this.$vux.toast.text(code, '')
+      })
     }
   }
 }

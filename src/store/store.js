@@ -7,7 +7,7 @@ Vue.use(Vuex)
 const state = {}
 // state['base'] = '47.92.236.235:8081/carbase'
 // state['base'] = '192.168.3.8:8080'
-state['base'] = '192.168.3.7:8080'
+state['base'] = '192.168.3.4:8080'
 state['url'] = ''
 
 const getters = {}

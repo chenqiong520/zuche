@@ -120,3 +120,6 @@ p {
 .map .search_panel a {
   display: none;
 }
+.el-collapse-item .el-collapse-item__content {
+  padding-bottom: 0;
+}
