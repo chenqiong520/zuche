@@ -25,17 +25,21 @@ export default {
         key: "",
         token: ""
       },
+      txurl: ''
     }
   },
   props: {
-    imgObj: Object
+    imgObj: Object,
+    token: String
   },
-  mounted () {
-    this.getKoken()
+  watch: {
+    token () {
+      this.postData.token = this.token
+    }
   },
   methods: {
     handleAvatarSuccessUpdate(res, file) {
-      this.imageUrlupdate=this.txurl;
+      this.imgObj.url=this.txurl;
       this.imageUrlUpdate = URL.createObjectURL(file.raw);
       this.$message('上传成功');
     },
@@ -44,7 +48,7 @@ export default {
       var filetype=file.type;
       var filetypename="."+filetype.substr(filetype.indexOf("/")+1,filetype.length);
       this.postData.key = filename+filetypename;
-      this.imgObj.url="http://img.cssbsb.top/"+filename+filetypename;
+     this.txurl="http://img.cssbsb.top/"+filename+filetypename;
       const isJPG = file.type === 'image/jpeg';
       const isPng = file.type === 'image/png';
       const isjpg = file.type === 'image/jpg';
@@ -73,26 +77,6 @@ export default {
       console.log("time:"+time);
       // 拼接
       return time;
-    },
-    // 获取图片七牛token
-    getKoken () {
-      var param = {
-        'cmd': 's59',
-        'code': '',
-        'type': '1',
-        'data': {
-        }}
-      api.postData(this, param).then((data) => {
-        this.$vux.loading.hide()
-        if (data.code === 0) {
-          this.postData.token=data.data;
-        } else {
-          this.$vux.toast.text(data.msg, '')
-        }
-      }).catch((code) => {
-        this.$vux.loading.hide()
-        this.$vux.toast.text(code, '')
-      })
     }
   }
 }
