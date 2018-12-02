@@ -61,15 +61,14 @@
           <div class="banner_img">
             <img src="../assets/banner.png" />
           </div>
-         <div class="title" @click="viewDetail">
+         <div class="title" @click="viewDetail(orderListFirst.ddid)">
            <span>租赁订单</span> <label style="float:right; color: #0084ff">详情》</label>
          </div>
          <Group class="title_group">
            <cell title="订单号" :value="orderListFirst.ddid"></cell>
            <cell title="下单时间" :value="orderListFirst.xdsj"></cell>
-           <cell title="租赁方式" :value="orderListFirst.jffs"></cell>
+           <cell title="租赁方式" :value="fmtWay(orderListFirst.jffs)"></cell>
            <cell title="租赁车型" :value="fmt(orderListFirst)"></cell>
-           <cell title="订单持续日期" :value="orderListFirst.zh_xm"></cell>
          </Group>
          <div class="btn_group">
            <span class="btn">延期</span>
@@ -230,7 +229,18 @@ export default {
     returnCar (type, ddid) {
       this.$router.push('/orderDetail?type=' + type + '&ddid=' + ddid)
     },
-    viewDetail () {}
+    fmtWay (way) {
+      if (way === '1') {
+        return '里程'
+      } else if (way === '2') {
+        return '包日'
+      } else if (way === '3') {
+        return '包月'
+      }
+    },
+    viewDetail (ddid) {
+      this.$router.push('/orderList?ddid=' + ddid)
+    }
   }
 }
 </script>

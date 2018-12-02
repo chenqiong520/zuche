@@ -1,16 +1,34 @@
 <template>
    <div class="zxz">
-     <x-header :left-options="{backText: ''}">历史订单
+     <x-header :left-options="{backText: ''}">{{headerName}}
        <x-icon slot="right" type="navicon" size="35" style="fill:#616161;position:relative;top:-8px;left:-3px;"></x-icon>
      </x-header>
      <div>
-       <tab bar-active-color="#0084ff" active-color="#333">
-         <tab-item selected @on-item-click="querywshList">未审核订单</tab-item>
-         <tab-item @on-item-click="queryOrderList">订单</tab-item>
+       <tab bar-active-color="#0084ff" active-color="#333" v-if="!ddid">
+         <tab-item selected @on-item-click="queryOrderList">订单</tab-item>
+         <tab-item  @on-item-click="querywshList">未审核订单</tab-item>
        </tab>
      </div>
      <div>
-       <el-collapse accordion v-show="showTabOne"  v-model="activeName">
+       <el-collapse accordion v-show="showTabOne" v-model="orderName">
+         <el-collapse-item   v-for="(item,index) in orderList" :key="index" :name="index">
+           <template slot="title">
+             <div  style="font-size: 15px;padding-left: 15px;width: 100%">订单号: <span style=" display:inline-block;margin-left: 10px"> {{item.ddid}}</span>
+               <span style=" display:inline-block;margin-right: 10px;color:#0084ff; float: right;">{{item.ddzt_z}}</span></div>
+           </template>
+           <group class="title_group">
+             <cell title="申请号" :value="item.sqid"></cell>
+             <cell title="车辆型号" :value="fmtXH(item)"></cell>
+             <cell title="车牌号" :value="item.car_cp"></cell>
+             <cell title="司机姓名" :value="item.zh_xm"></cell>
+             <cell title="申请人" :value="item.sqr"></cell>
+             <cell title="申请人电话" :value="item.sqrdh"></cell>
+             <cell title="联系人" :value="item.lxr"></cell>
+             <cell title="联系人电话" :value= "item.lxrdh"></cell>
+           </group>
+         </el-collapse-item>
+       </el-collapse>
+       <el-collapse accordion v-show="!showTabOne"  v-model="activeName">
          <el-collapse-item    v-for="(item, index) in wshOrderList" :key="index" :name="index">
            <template slot="title">
              <div   style="font-size: 15px;padding-left: 15px; width: 100%">订单号: <span style=" display:inline-block;margin-left: 10px"> {{item.sqid}}</span>
@@ -29,25 +47,6 @@
            </div>
          </el-collapse-item>
        </el-collapse>
-
-       <el-collapse accordion v-show="!showTabOne">
-         <el-collapse-item   v-for="(item,index) in orderList" :key="index">
-           <template slot="title">
-             <div  style="font-size: 15px;padding-left: 15px;width: 100%">订单号: <span style=" display:inline-block;margin-left: 10px"> {{item.ddid}}</span>
-               <span style=" display:inline-block;margin-right: 10px;color:#0084ff; float: right;">{{item.ddzt_z}}</span></div>
-           </template>
-           <group class="title_group">
-             <cell title="申请号" :value="item.sqid"></cell>
-             <cell title="车辆型号" :value="fmtXH(item)"></cell>
-             <cell title="车牌号" :value="item.car_cp"></cell>
-             <cell title="司机姓名" :value="item.zh_xm"></cell>
-             <cell title="申请人" :value="item.sqr"></cell>
-             <cell title="申请人电话" :value="item.sqrdh"></cell>
-             <cell title="联系人" :value="item.lxr"></cell>
-             <cell title="联系人电话" :value= "item.lxrdh"></cell>
-           </group>
-         </el-collapse-item>
-       </el-collapse>
      </div>
    </div>
 </template>
@@ -63,15 +62,21 @@ export default {
       showTabOne: true,
       orderList: [],
       wshOrderList: [],
-      activeName: ''
+      activeName: '',
+      orderName: '',
+      headerName: '历史订单',
+      ddid: this.$route.query.ddid || ''
     }
   },
   mounted () {
-    this.querywshList()
+    if (this.ddid) {
+      this.headerName = '订单详情'
+    }
+    this.queryOrderList()
   },
   methods: {
     querywshList () {
-      this.showTabOne = true
+      this.showTabOne = false
       this.activeName = ''
       this.$vux.loading.show({text: '加载中'})
       let params = api.getParam('app002', {'shbz': '0'})
@@ -103,9 +108,17 @@ export default {
       })
     },
     queryOrderList () {
-      this.showTabOne = false
+      this.showTabOne = true
+      if (this.ddid) {
+        this.orderName = 0
+      }
       this.$vux.loading.show({text: '加载中'})
-      let params = api.getParam('dd08')
+      let params = {}
+      if (this.ddid) {
+        params = api.getParam('dd08', {ddid: this.ddid})
+      } else {
+        params = api.getParam('dd08')
+      }
       api.postData(this, params).then((data) => {
         this.$vux.loading.hide()
         if (data.code === 0) {
