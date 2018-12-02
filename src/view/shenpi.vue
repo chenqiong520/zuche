@@ -35,8 +35,8 @@
       <el-collapse accordion v-show="!showTabOne">
         <el-collapse-item   v-for="(item,index) in haslist" :key="index" :name="index">
           <template slot="title">
-            <div  style="font-size: 15px;padding-left: 15px">订单号: <span style=" display:inline-block;margin-left: 10px"> {{item.sqid}}</span>
-              <span style=" display:inline-block;margin-left: 30px;color:#0084ff">{{item.shbz}}</span></div>
+            <div  style="font-size: 15px;padding-left: 15px; width: 100%">订单号: <span style=" display:inline-block;margin-left: 10px"> {{item.sqid}}</span>
+              <span style=" display:inline-block;margin-right: 10px;color:#0084ff; float: right;">{{item.shbz}}</span></div>
           </template>
           <group class="title_group">
             <cell title="申请人" :value="item.sqr"></cell>
@@ -79,7 +79,10 @@ export default {
   },
   methods: {
     fmtSJ (beg, end) {
-      return beg.substring(0, 16) + ' - ' + end.substring(0, 16)
+      if (end) {
+        return beg.substring(0, 16) + ' - ' + end.substring(0, 16)
+      }
+      return beg.substring(0, 16)
     },
     fmtXH (item) {
       return item.car_pp + item.car_xh

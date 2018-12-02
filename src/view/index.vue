@@ -61,7 +61,7 @@
           <div class="banner_img">
             <img src="../assets/banner.png" />
           </div>
-         <div class="title">
+         <div class="title" @click="viewDetail">
            <span>租赁订单</span> <label style="float:right; color: #0084ff">详情》</label>
          </div>
          <Group class="title_group">
@@ -229,7 +229,8 @@ export default {
     },
     returnCar (type, ddid) {
       this.$router.push('/orderDetail?type=' + type + '&ddid=' + ddid)
-    }
+    },
+    viewDetail () {}
   }
 }
 </script>

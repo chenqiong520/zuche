@@ -12,10 +12,11 @@
             <span>租车</span>
           </div>
           <group  class="title_group">
-            <popup-picker title="租赁方式" show-name  :data="list1" v-model="queryParam.rentWay"  placeholder="请选择" @on-change="selectRentWay"></popup-picker>
-            <popup-picker title="需要司机" show-name :data="list2" v-model="queryParam.needDriver"  placeholder="请选择" @on-change="selectNeed"></popup-picker>
-            <datetime  title="租赁起始日期" v-model="queryParam.jcsj" format="YYYY-MM-DD HH:mm" :minute-list="['00', '15', '30', '45']" placeholder="请选择"> </datetime>
-            <datetime  title="租赁结束日期" v-model="queryParam.hcsj" format="YYYY-MM-DD HH:mm" :minute-list="['00', '15', '30', '45']" placeholder="请选择"> </datetime>
+            <popup-picker title="租赁方式" show-name  :data="list1" v-model="rentWay"  placeholder="请选择" @on-change="selectRentWay"></popup-picker>
+            <datetime  title="租赁起始日期" v-model="queryParam.jcsj" format="YYYY-MM-DD HH:mm" placeholder="请选择"> </datetime>
+            <x-number v-show="queryParam.jffs === '2'" title="包日数" v-model="queryParam.bts" :min="0" @on-change="changeDay"></x-number>
+            <x-number  v-show="queryParam.jffs === '3'" title="包月数" v-model="queryParam.bys" :min="0" @on-change="changeMonth"></x-number>
+            <datetime  v-show="queryParam.jffs !== '1'" readonly title="租赁结束日期" v-model="queryParam.hcsj" format="YYYY-MM-DD HH:mm"> </datetime>
             <x-input  title="用车人" v-model="queryParam.ycr"></x-input>
             <x-input  title="用车人电话" v-model="queryParam.ycrdh"></x-input>
             <x-input  title="车辆用途" v-model="queryParam.clyt"></x-input>
@@ -30,13 +31,15 @@
               <div  class="car_tip">三责险额度：<span style="color: #e8a75b">50万</span></div>
             </div>
             <div class="num">
-              <input v-model="item.sqsl" @blur="selectCar(item, index)"/>
+              <x-number class="num_car" v-model="item.sqsl" :min="0" @click.native="selectCar(item, index)"></x-number>
+              <el-radio class="need_driver" :disabled="item.driver === 0 || item.sqsl === 0" v-model="item.xysj" label="1">配备司机</el-radio>
             </div>
           </div>
         </div>
         <p class="notice_msg">超里程数：100公里/天，超过标准按照公里价格计算</p>
         <div class="btn_next" @click="nextStep">下一步</div>
       </div>
+
       <div v-show="step ===1" class="next_step">
         <group class="title_group">
           <div class="item_wrapper">
@@ -45,7 +48,7 @@
           </div>
           <div class="item_wrapper">
             <img class="icon_img" src="../assets/mdd.png">
-            <x-input  title="目的地" v-model="queryParam.mdd" @on-change="changeMdd"></x-input>
+            <x-input  v-show="queryParam.jffs === '1'"  title="目的地" v-model="queryParam.mdd" @on-change="changeMdd"></x-input>
           </div>
         </group>
         <baidu-map class="map" center="抚州" :zoom="zoom" @ready="handler">
@@ -60,6 +63,7 @@
             :startCity="drivingParam.startCity"
             :endCity="drivingParam.endCity"
             :auto-viewport="true"
+            :panel="false"
             @markersset="markersset"
           ></bm-driving>
           <!-- 地区检索控件-->
@@ -72,11 +76,11 @@
 </template>
 
 <script>
-import {XHeader, Group, PopupPicker, Datetime, XInput, Tab, TabItem} from 'vux'
+import {XHeader, Group, PopupPicker, Datetime, XInput, XNumber, CheckIcon} from 'vux'
 import api from '../router/api'
 export default {
   name: 'carRenting',
-  components: {XHeader, Group, PopupPicker, Datetime, XInput, Tab, TabItem},
+  components: {XHeader, Group, PopupPicker, Datetime, XInput, XNumber, CheckIcon},
   data () {
     return {
       mapShow: false,
@@ -116,7 +120,9 @@ export default {
         jcdd: '', // 起始地
         jcdd_jwd: '',
         mdd: '', // 目的地
-        mdd_jwd: ''
+        mdd_jwd: '',
+        bts: 0, // 包天数
+        bys: 0// 包月数
       },
       zoom: 15,
       center: {
@@ -142,6 +148,12 @@ export default {
     // 根据租赁方式添加列表
     selectRentWay (way) {
       this.queryParam.jffs = way[0]
+      this.queryParam.jcsj = ''
+      this.queryParam.hcsj = ''
+      this.queryParam.bts = 0
+      this.queryParam.bys = 0
+      this.queryParam.mdd = ''
+      this.queryParam.mdd_jwd = ''
       this.$vux.loading.show({text: '加载中'})
       let params = api.getParam('app003', {gzlx: way[0]})
       api.postData(this, params).then((data) => {
@@ -150,6 +162,7 @@ export default {
           if (data.data.rows && data.data.rows.length > 0) {
             for (let i in data.data.rows) {
               data.data.rows[i].sqsl = 0
+              data.data.rows[i].xysj = '0'
             }
           }
           this.carList = data.data.rows
@@ -161,21 +174,28 @@ export default {
         this.$vux.toast.text(code, '')
       })
     },
-    selectNeed (need) {
-      this.queryParam.xysj = need[0]
+    changeDay () {
+      if (this.queryParam.jcsj) {
+        let date = new Date(this.queryParam.jcsj)
+        date.setDate(date.getDate() + this.queryParam.bts)
+        let strDate = this.$root.formatDate(date, 'yyyy-MM-dd hh:mm:ss')
+        this.queryParam.hcsj = strDate
+      }
+    },
+    changeMonth () {
+      if (this.queryParam.jcsj) {
+        let date = new Date(this.queryParam.jcsj)
+        date.setMonth(date.getMonth() + this.queryParam.bys)
+        let strDate = this.$root.formatDate(date, 'yyyy-MM-dd hh:mm:ss')
+        this.queryParam.hcsj = strDate
+      }
     },
     nextStep () {
       if (this.queryParam.jffs === '') {
         this.$vux.toast.text('请选择租赁方式', '')
         return
-      } else if (this.queryParam.xysj === '') {
-        this.$vux.toast.text('请选择是否需要司机', '')
-        return
       } else if (this.queryParam.jcsj === '') {
         this.$vux.toast.text('请选择起始时间', '')
-        return
-      } else if (this.queryParam.hcsj === '') {
-        this.$vux.toast.text('请选择结束时间', '')
         return
       } else if (this.queryParam.ycr === '') {
         this.$vux.toast.text('请选择用车人', '')
@@ -190,6 +210,19 @@ export default {
         this.$vux.toast.text('请输入正确的手机号码', '')
         return
       }
+      if (this.queryParam.jffs === '2') {
+        if (this.queryParam.bts === 0) {
+          this.$vux.toast.text('请选择包天数', '')
+          return
+        }
+      }
+      if (this.queryParam.jffs === '3') {
+        if (this.queryParam.bys === 0) {
+          this.$vux.toast.text('请选择包月数', '')
+          return
+        }
+        return
+      }
       this.step = 1
     },
     // 选择车辆
@@ -200,15 +233,34 @@ export default {
       this.carList.forEach((e) => {
         if (e.id !== item.id) {
           e.sqsl = 0
+          e.xysj = '0'
         }
       })
     },
+    selectNeed (item, index) {
+      this.queryParam.xysj = item.xysj
+    },
     submitOrder () {
+      if (this.queryParam.jcdd === '') {
+        this.$vux.toast.text('请输入起始地', '')
+        return
+      }
+      if (this.queryParam.jffs === '1') {
+        if (this.queryParam.mdd === '') {
+          this.$vux.toast.text('请输入目的地', '')
+          return
+        }
+      }
+      let param = {}
+      Object.assign(param, this.queryParam)
+      param.jcsj = this.queryParam.jcsj + ':00'
+      let params = api.getParam('app004', param)
       this.$vux.loading.show({text: '加载中'})
-      let params = api.getParam('app004', this.queryParam)
       api.postData(this, params).then((data) => {
         this.$vux.loading.hide()
         if (data.code === 0) {
+          this.$vux.toast.text('租车成功', '')
+          this.$router.push('/index')
         } else {
           this.$vux.toast.text(data.msg, '')
         }
@@ -245,13 +297,15 @@ export default {
       this.isInput = false
       this.map.Oa = 19
       if (this.isChangeMdd) {
+        console.log(point)
         this.queryParam.mdd = point.title
-        this.queryParam.mdd = point.title
+        this.queryParam.mdd_jwd = point.point.lat + ',' + point.point.lng
         this.drivingParam.end = point.point
         this.drivingParam.endCity = point.city
       } else {
+        console.log(point)
         this.queryParam.jcdd = point.title
-        this.queryParam.jcdd = point.title
+        this.queryParam.jcdd_jwd = point.point.lat + ',' + point.point.lng
         this.drivingParam.start = point.point
         this.drivingParam.startCity = point.city
       }
