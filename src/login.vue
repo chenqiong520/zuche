@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <div class="app_name">沐博</div>
+    <div class="app_name">抚州景达<br/>汽车租赁平台</div>
     <group class="title_group login_cells">
       <x-input placeholder="账号" v-model="model.username"></x-input>
       <x-input  placeholder="密码"   type="password" v-model="model.password"></x-input>
@@ -84,11 +84,11 @@ export default {
     height: 100%;
   }
   .app_name {
-    font-size: 44px;
+    font-size: 30px;
     color: #379df9;
     text-align: center;
-    padding-top: 65px;
-    margin-bottom: 77px;
+    padding-top: 50px;
+    margin-bottom: 50px;
   }
   .footer_div {
     padding: 0 15px;

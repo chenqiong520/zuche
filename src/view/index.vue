@@ -196,7 +196,9 @@ export default {
         this.$vux.loading.hide()
         if (data.code === 0) {
           this.dwcList = data.data
-          this.queryCurrentOrder(data.data[0].yw_id, data.data[0].rwtype)
+          if (data.data[0]) {
+            this.queryCurrentOrder(data.data[0].yw_id, data.data[0].rwtype)
+          }
         } else {
           this.$vux.toast.text(data.msg, '')
         }

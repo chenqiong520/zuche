@@ -13,7 +13,7 @@
           </div>
           <group  class="title_group">
             <popup-picker title="租赁方式" show-name  :data="list1" v-model="rentWay"  placeholder="请选择" @on-change="selectRentWay"></popup-picker>
-            <datetime  title="租赁起始日期" v-model="queryParam.jcsj" format="YYYY-MM-DD HH:mm" placeholder="请选择"> </datetime>
+            <datetime  title="租赁起始日期" v-model="queryParam.jcsj" format="YYYY-MM-DD HH:mm" placeholder="请选择" @on-change="selectDate"> </datetime>
             <x-number v-show="queryParam.jffs === '2'" title="包日数" v-model="queryParam.bts" :min="0" @on-change="changeDay"></x-number>
             <x-number  v-show="queryParam.jffs === '3'" title="包月数" v-model="queryParam.bys" :min="0" @on-change="changeMonth"></x-number>
             <datetime  v-show="queryParam.jffs !== '1'" readonly title="租赁结束日期" v-model="queryParam.hcsj" format="YYYY-MM-DD HH:mm"> </datetime>
@@ -32,7 +32,8 @@
             </div>
             <div class="num">
               <x-number class="num_car" v-model="item.sqsl" :min="0" @click.native="selectCar(item, index)"></x-number>
-              <el-radio class="need_driver" :disabled="item.driver === 0 || item.sqsl === 0" v-model="item.xysj" label="1">配备司机</el-radio>
+              <el-radio class="need_driver" @click.native ="changeNedd(item.sqsl)" :disabled="item.driver === 0 || item.sqsl === 0" v-model="item.xysj" label="1">配司机</el-radio>
+              <el-radio class="need_driver"  @click.native ="changeNedd(item.sqsl)" :disabled="item.driver === 0 || item.sqsl === 0" v-model="item.xysj" label="0">不配司机</el-radio>
             </div>
           </div>
         </div>
@@ -190,6 +191,13 @@ export default {
         this.queryParam.hcsj = strDate
       }
     },
+    selectDate () {
+      if (this.queryParam.jffs === '2' && this.queryParam.bts > 0) {
+        this.changeDay()
+      } else if (this.queryParam.jffs === '3' && this.queryParam.bys > 0) {
+        this.changeMonth()
+      }
+    },
     nextStep () {
       if (this.queryParam.jffs === '') {
         this.$vux.toast.text('请选择租赁方式', '')
@@ -221,13 +229,12 @@ export default {
           this.$vux.toast.text('请选择包月数', '')
           return
         }
-        return
       }
       this.step = 1
     },
     // 选择车辆
     selectCar (item, index) {
-      this.queryParam.sqsl = item.sqsl
+      this.queryParam.sqsl = item.sqsl + 1
       this.queryParam.car_pp = item.car_pp
       this.queryParam.car_xh = item.car_xh
       this.carList.forEach((e) => {
@@ -237,8 +244,8 @@ export default {
         }
       })
     },
-    selectNeed (item, index) {
-      this.queryParam.xysj = item.xysj
+    changeNedd (xysj) {
+      this.queryParam.xysj = xysj.toString()
     },
     submitOrder () {
       if (this.queryParam.jcdd === '') {
@@ -259,7 +266,7 @@ export default {
       api.postData(this, params).then((data) => {
         this.$vux.loading.hide()
         if (data.code === 0) {
-          this.$vux.toast.text('租车成功', '')
+          this.$vux.toast.text('申请成功', '')
           this.$router.push('/index')
         } else {
           this.$vux.toast.text(data.msg, '')
@@ -297,13 +304,11 @@ export default {
       this.isInput = false
       this.map.Oa = 19
       if (this.isChangeMdd) {
-        console.log(point)
         this.queryParam.mdd = point.title
         this.queryParam.mdd_jwd = point.point.lat + ',' + point.point.lng
         this.drivingParam.end = point.point
         this.drivingParam.endCity = point.city
       } else {
-        console.log(point)
         this.queryParam.jcdd = point.title
         this.queryParam.jcdd_jwd = point.point.lat + ',' + point.point.lng
         this.drivingParam.start = point.point

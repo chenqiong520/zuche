@@ -45,12 +45,12 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../dist/deploy/index.html'),
+    index: path.resolve(__dirname, '../dist/carapp/index.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../dist/deploy'),
+    assetsRoot: path.resolve(__dirname, '../dist/carapp'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/deploy/',
+    assetsPublicPath: '/carapp/',
 
     /**
      * Source Maps

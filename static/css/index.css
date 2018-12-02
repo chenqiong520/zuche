@@ -126,6 +126,12 @@ p {
 .num .need_driver {
   margin-top: 20px;
 }
+.num .el-radio+.el-radio {
+  margin-left: 0;
+}
+.num .el-radio__label {
+padding-left: 0;
+}
 #app .num .num_car {
   padding: 0;
 }
